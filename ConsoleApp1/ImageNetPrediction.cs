@@ -9,10 +9,10 @@ namespace ConsoleApp1
 {
     public class ImageNetPrediction
     {
-        [ColumnName("273")]
+        [ColumnName("textmap")]
         public float[] textmap;
 
-        [ColumnName("263")]
+        [ColumnName("linkmap")]
         public float[] linkmap;
     }
 }

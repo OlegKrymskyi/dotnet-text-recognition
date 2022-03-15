@@ -9,6 +9,7 @@ using Numpy;
 using System.Runtime.InteropServices;
 using Emgu.CV.Structure;
 using Numpy.Models;
+using SkiaSharp;
 
 namespace ConsoleApp1
 {
@@ -20,23 +21,26 @@ namespace ConsoleApp1
         {
             Console.WriteLine("Hello World!");
 
+            using var fs = new SKFileStream("assets/1.jpg");
+            using var img = SKBitmap.Decode(fs);
+
             MLContext mlContext = new MLContext();
 
             var dataView = mlContext.Data.LoadFromEnumerable(new List<ImageNetData>());
 
             var pipeline = mlContext.Transforms
                 .LoadImages(
-                    outputColumnName: "input.1", imageFolder: "assets",
+                    outputColumnName: "image", imageFolder: "assets",
                     inputColumnName: nameof(ImageNetData.ImagePath))
-                .Append(mlContext.Transforms.ResizeImages(resizing: ImageResizingEstimator.ResizingKind.Fill, outputColumnName: "input.1", imageWidth: 1184, imageHeight: 1280, inputColumnName: "input.1"))
+                .Append(mlContext.Transforms.ResizeImages(resizing: ImageResizingEstimator.ResizingKind.Fill, outputColumnName: "image", imageWidth: 1280, imageHeight: 1184, inputColumnName: "image"))
                 .Append(mlContext.Transforms.ExtractPixels(
-                    outputColumnName: "input.1"))
+                    outputColumnName: "image"))
                 .Append(mlContext.Transforms.ApplyOnnxModel(
-                    modelFile: "craft.onnx",
+                    modelFile: "craft-1280.onnx",
                     outputColumnNames: new[] {
-                               "273", "263"},
+                               "textmap", "linkmap"},
                     inputColumnNames: new[] {
-                               "input.1"}));
+                               "image"}));
 
             var mlNetModel = pipeline.Fit(dataView);
 
@@ -77,6 +81,11 @@ namespace ConsoleApp1
                     continue;
                 }
 
+                var labelsTemp = new List<bool>();
+                foreach (int label in labels.GetData())
+                {
+                    labelsTemp.Add(label == k);
+                }
                 // thresholding
                 //if np.max(textmap[labels == k]) < text_threshold: continue
 
@@ -86,13 +95,18 @@ namespace ConsoleApp1
 
         private static float[] ToFloatVector(Mat mat)
         {
-            var result = new float[mat.Size.Width];
+            return ToVectorArray<float>(mat);
+        }
+
+        private static T[] ToVectorArray<T>(Mat mat)
+        {
+            var result = new T[mat.Size.Width];
 
             var data = mat.GetData();
             int i = 0;
             foreach (var element in data)
             {
-                result[i] = (float)element;
+                result[i] = (T)element;
                 i++;
             }
 
