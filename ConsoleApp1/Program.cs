@@ -22,34 +22,33 @@ namespace ConsoleApp1
         {
             Console.WriteLine("Hello World!");
 
-            //using var img = (Bitmap)Bitmap.FromFile("assets/1.jpg");
+            using var imageMat = new Mat("assets/1.jpg", loadType: ImreadModes.Color);
 
-            //var imgData = img.ToNDArray(flat: false, copy: false);
+            using var rgbImage = new Mat();
+            CvInvoke.CvtColor(imageMat, rgbImage, ColorConversion.Bgr2Rgb);
+
+            using var inputData = ToImageNDarray<byte>(rgbImage);
+
+            var resizedDataTuple = resize_aspect_ratio(inputData, 1280, Inter.Linear);
+
+            using var resizedImage = resizedDataTuple.Item1;
 
             MLContext mlContext = new MLContext();
 
-            var dataView = mlContext.Data.LoadFromEnumerable(new List<ImageNetData>());
+            var dataView = mlContext.Data.LoadFromEnumerable(new List<ImageRawNetData>());
 
-            var pipeline = mlContext.Transforms
-                .LoadImages(
-                    outputColumnName: "image", imageFolder: "assets",
-                    inputColumnName: nameof(ImageNetData.ImagePath))
-                .Append(mlContext.Transforms.ResizeImages(resizing: ImageResizingEstimator.ResizingKind.Fill, 
-                    outputColumnName: "image", imageWidth: 1280, imageHeight: 1184, inputColumnName: "image"))
-                .Append(mlContext.Transforms.ExtractPixels(
-                    outputColumnName: "image"))
-                .Append(mlContext.Transforms.ApplyOnnxModel(
-                    modelFile: "craft-1280.onnx",
+            var pipeline = mlContext.Transforms.ApplyOnnxModel(
+                    modelFile: "craft-var.onnx",
                     outputColumnNames: new[] {
                                "textmap", "linkmap"},
                     inputColumnNames: new[] {
-                               "image"}));
+                               "image"});
 
             var mlNetModel = pipeline.Fit(dataView);
 
-            var predictEngine = mlContext.Model.CreatePredictionEngine<ImageNetData, ImageNetPrediction>(mlNetModel);
+            var predictEngine = mlContext.Model.CreatePredictionEngine<ImageRawNetData, ImageNetPrediction>(mlNetModel);
 
-            var result = predictEngine.Predict(new ImageNetData() { ImagePath = "1.jpg", Label= "1" });
+            var result = predictEngine.Predict(new ImageRawNetData() { image = resizedImage.GetData<byte>() });
 
             var textmapShape = np.array(result.textmap).shape;
             var img_h = textmapShape[0];
@@ -164,8 +163,8 @@ namespace ConsoleApp1
             var target_h = (int)(height * ratio);
             var target_w = (int)(width * ratio);
 
-            var imgMat = new Mat();
-            CvInvoke.Resize(ToMatImage(img), imgMat, new Size(target_w, target_h), interpolation: interpolation);
+            using var imgMat = new Mat();
+            CvInvoke.Resize(ToMatImage<byte>(img), imgMat, new Size(target_w, target_h), interpolation: interpolation);
 
             //# make canvas and paste image
             var target_h32 = target_h;
@@ -180,7 +179,7 @@ namespace ConsoleApp1
                 target_w32 = target_w + (32 - target_w % 32);
             }
 
-            var resized = ToImageNDarray(imgMat, target_w32, target_h32, channel);
+            var resized = ToImageNDarray<byte>(imgMat, target_w32, target_h32, channel);
 
             return new Tuple<NDarray, float>(resized, ratio);
         }
@@ -200,34 +199,52 @@ namespace ConsoleApp1
         {
             img = (np.clip(img, (NDarray)0, (NDarray)1) * 255).astype(np.uint8);
             var matImg = new Mat();
-            CvInvoke.ApplyColorMap(ToMatImage(img), matImg, ColorMapType.Jet);
+            CvInvoke.ApplyColorMap(ToMatImage<float>(img), matImg, ColorMapType.Jet);
             return ToImageNDarray(matImg, matImg.Cols, matImg.Rows, matImg.NumberOfChannels);
         }
 
-        private static Mat ToMatImage(NDarray npArrary)
+        private static Mat ToMatImage<T>(NDarray npArrary)
         {
-            var result = Mat.Eye(npArrary.shape[0], npArrary.shape[1], DepthType.Cv32F, npArrary.shape[2]);
-            result.SetTo<float>(npArrary.GetData<float>());
+            var result = new Mat(npArrary.shape[0], npArrary.shape[1], GetDepthType<T>(), npArrary.shape[2]);
+            var arr = npArrary.GetData<T>();
+            result.SetTo<T>(arr);
             return result;
+        }
+
+        private static DepthType GetDepthType<T>()
+        {
+            if (typeof(T) == typeof(byte))
+            {
+                return DepthType.Cv8U;
+            }
+            else if (typeof(T) == typeof(float))
+            {
+                return DepthType.Cv32F;
+            }
+
+            return DepthType.Cv32F;
+        }
+
+        private static NDarray ToImageNDarray(Mat mat)
+        {
+            return ToImageNDarray(mat, mat.Cols, mat.Rows, mat.NumberOfChannels);
+        }
+
+        private static NDarray ToImageNDarray<T>(Mat mat)
+        {
+            return ToImageNDarray<T>(mat, mat.Cols, mat.Rows, mat.NumberOfChannels);
         }
 
         private static NDarray ToImageNDarray(Mat mat, int width, int height, int channels)
         {
-            var resized = np.zeros((height, width, mat.NumberOfChannels), dtype: np.float32);
+            return ToImageNDarray<float>(mat, width, height, channels);
+        }
 
-            var data = new float[height * width * mat.NumberOfChannels];
-            mat.CopyTo<float>(data);
-            for (var r = 0; r < height; r++)
-            {
-                for (var c = 0; c < width; c++)
-                {
-                    for (var i = 0; i < channels; i++)
-                    {
-                        resized[r, c, i] = (NDarray)data[r + c + i];
-                    }
-                }
-            }
-            return resized;
+        private static NDarray ToImageNDarray<T>(Mat mat, int width, int height, int channels)
+        {
+            var data = new T[height * width * mat.NumberOfChannels];
+            mat.CopyTo<T>(data);
+            return np.reshape(data, height, width, channels);
         }
 
         private static float[] ToFloatVector(Mat mat)
