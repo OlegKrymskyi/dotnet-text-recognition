@@ -28,14 +28,14 @@ namespace ConsoleApp1
         {
             Console.WriteLine("Hello World!");
 
-            //using var imageMat = new Mat("assets/1.jpg", loadType: ImreadModes.Color);
+            using var imageMat = new Mat("assets/1.jpg", loadType: ImreadModes.Color);
 
-            //using var rgbImage = new Mat();
-            //CvInvoke.CvtColor(imageMat, rgbImage, ColorConversion.Bgr2Rgb);
+            using var rgbImage = new Mat();
+            CvInvoke.CvtColor(imageMat, rgbImage, ColorConversion.Bgr2Rgb);
 
-            //using var inputData = ToImageNDarray<byte>(rgbImage);
+            using var inputData = ToImageNDarray<byte>(rgbImage);
 
-            //var resizedDataTuple = resize_aspect_ratio(inputData, 1280, Inter.Linear);
+            var resizedDataTuple = resize_aspect_ratio(inputData, 1280, Inter.Linear);
 
             //using var resizedImage = resizedDataTuple.Item1;
 
@@ -48,7 +48,7 @@ namespace ConsoleApp1
                     outputColumnName: "image", imageFolder: "assets",
                     inputColumnName: nameof(ImageNetData.ImagePath))
                 .Append(mlContext.Transforms.ResizeImages(resizing: ImageResizingEstimator.ResizingKind.Fill,
-                    outputColumnName: "image", imageWidth: 1280, imageHeight: 1184, inputColumnName: "image"))
+                    outputColumnName: "image", imageWidth: 1280, imageHeight: 1184))
                 .Append(mlContext.Transforms.ExtractPixels(
                     outputColumnName: "image"))
                 .Append(mlContext.Transforms.ApplyOnnxModel(
@@ -117,7 +117,8 @@ namespace ConsoleApp1
 
                 // make segmentation map
                 using var segmapZero = np.zeros(textmap.shape, dtype: np.uint8);
-                using var segmap = WhereFlags<byte>(segmapZero, labelFlags, (flag, elem) => (byte)(flag ? 255 : 0));
+                using var segmap1 = WhereFlags<byte>(segmapZero, labelFlags, (flag, elem) => (byte)(flag ? 255 : 0));
+                using var segmap = WhereFlags<byte>(segmap1, np.logical_and(scoreLink.equals(1), scoreText.equals(0)), (flag, elem) => (byte)(flag ? 0 : elem));
 
                 var x = (int)stats[k, (int)ConnectedComponentsTypes.Left];
                 var y = (int)stats[k, (int)ConnectedComponentsTypes.Top];
