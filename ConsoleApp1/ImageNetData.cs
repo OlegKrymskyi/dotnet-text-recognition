@@ -8,10 +8,9 @@ using Microsoft.ML.Data;
 
 namespace ConsoleApp1
 {
-    public class ImageRawNetData
+    public class ImageNetData
     {
         [LoadColumn(0)]
-        [ColumnName("image")]
-        public byte[] image;
+        public string ImagePath;
     }
 }

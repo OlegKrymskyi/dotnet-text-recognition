@@ -11,6 +11,7 @@ using Emgu.CV.Structure;
 using Numpy.Models;
 using SkiaSharp;
 using System.Drawing;
+using Microsoft.ML.Data;
 
 namespace ConsoleApp1
 {
@@ -37,32 +38,23 @@ namespace ConsoleApp1
 
             var resizedDataTuple = resize_aspect_ratio(inputData, 1280, Inter.Linear);
 
-            //using var resizedImage = resizedDataTuple.Item1;
+            using var resizedImage = resizedDataTuple.Item1;
 
             MLContext mlContext = new MLContext();
 
-            var dataView = mlContext.Data.LoadFromEnumerable(new List<ImageNetData>());
+            var dataView = mlContext.Data.LoadFromEnumerable(new List<ImageRawNetData>());
 
-            var pipeline = mlContext.Transforms
-                .LoadImages(
-                    outputColumnName: "image", imageFolder: "assets",
-                    inputColumnName: nameof(ImageNetData.ImagePath))
-                .Append(mlContext.Transforms.ResizeImages(resizing: ImageResizingEstimator.ResizingKind.Fill,
-                    outputColumnName: "image", imageWidth: 1280, imageHeight: 1184))
-                .Append(mlContext.Transforms.ExtractPixels(
-                    outputColumnName: "image"))
-                .Append(mlContext.Transforms.ApplyOnnxModel(
+            var pipeline = mlContext.Transforms.ApplyOnnxModel(
                     modelFile: "craft-var.onnx",
                     outputColumnNames: new[] {
                                "output"},
                     inputColumnNames: new[] {
-                               "image"}));
+                               "image"});
 
             var mlNetModel = pipeline.Fit(dataView);
 
-            var predictEngine = mlContext.Model.CreatePredictionEngine<ImageNetData, ImageNetPrediction>(mlNetModel);
-
-            var result = predictEngine.Predict(new ImageNetData() { ImagePath = "2.jpg" });
+            var predictEngine = mlContext.Model.CreatePredictionEngine<ImageRawNetData, ImageNetPrediction>(mlNetModel);
+            var result = predictEngine.Predict(new ImageRawNetData() { image = resizedImage.astype(np.float32).GetData<float>() });
 
             using var outputArray = np.reshape(result.output, 1, 592, 640, 2);
             using var textmap = outputArray["0,:,:,0"];
@@ -152,8 +144,8 @@ namespace ConsoleApp1
                 }
 
                 // make box
-                using var tempArr = np.roll(np.array(np.where(segmap.not_equals(0))), new int[] { 1 }, new Axis(0));
-                using var np_contours = tempArr.transpose(0).reshape(-1, 2);
+                using var tempArr = np.roll(np.array(np.where(segmap.not_equals(0))), new int[] { 1 }, axis:0);
+                using var np_contours = tempArr.transpose().reshape(-1, 2);
                 //var rectangle = CvInvoke.MinAreaRect(np_contours);
                 //var box = CvInvoke.BoxPoints(rectangle)
             }
@@ -295,6 +287,22 @@ namespace ConsoleApp1
         private static float[] ToFloatVector(Mat mat)
         {
             return ToVectorArray<float>(mat);
+        }
+
+        private static float[,,,] ToFloatImage(NDarray arr)
+        {
+            var result = new float[arr.shape[0], arr.shape[1], arr.shape[2], arr.shape[3]];
+            for (var i = 0; i < arr.shape[0]; i++)
+            {
+                for (var j = 0; j < arr.shape[1]; j++)
+                for (var k = 0; k < arr.shape[2]; k++)
+                for (var c = 0; c < arr.shape[3]; c++)
+                {
+                    result[i, j, k, c] = (float)arr[i, j, k, c];
+                }
+            }
+
+            return result;
         }
 
         private static T[] ToVectorArray<T>(Mat mat)
