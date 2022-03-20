@@ -40,6 +40,14 @@ namespace ConsoleApp1
 
             using var resizedImage = resizedDataTuple.Item1;
 
+            // preprocessing
+            using var resizedImageNormalized = normalizeMeanVariance(resizedImage,
+                mean: new NDarray(new float[] { 0.485f, 0.456f, 0.406f }),
+                variance: new NDarray(new float[] { 0.229f, 0.224f, 0.225f }));
+
+            // [h, w, c] to [c, h, w]
+            using var finaleImage = resizedImageNormalized.transpose(2, 0, 1);
+
             MLContext mlContext = new MLContext();
 
             var dataView = mlContext.Data.LoadFromEnumerable(new List<ImageRawNetData>());
@@ -54,7 +62,7 @@ namespace ConsoleApp1
             var mlNetModel = pipeline.Fit(dataView);
 
             var predictEngine = mlContext.Model.CreatePredictionEngine<ImageRawNetData, ImageNetPrediction>(mlNetModel);
-            var result = predictEngine.Predict(new ImageRawNetData() { image = resizedImage.astype(np.float32).GetData<float>() });
+            var result = predictEngine.Predict(new ImageRawNetData() { image = finaleImage.astype(np.float32).GetData<float>() });
 
             using var outputArray = np.reshape(result.output, 1, 592, 640, 2);
             using var textmap = outputArray["0,:,:,0"];
@@ -87,6 +95,7 @@ namespace ConsoleApp1
             using var stats = ToImageNDarray<int>(statsMat);
             using var labels = ToImageNDarray<int>(labelsMat);
             using var centroids = ToImageNDarray<float>(centroidsMat);
+            var boxes = new Dictionary<int, PointF[]>();
             for (var k = 1; k < nLabels; k++)
             {
                 // size filtering
@@ -129,7 +138,7 @@ namespace ConsoleApp1
                 if (ex >= img_w) ex = img_w;
                 if (ey >= img_h) ey = img_h;
 
-                using var kernelMat = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(1 + niter, 1 + niter), new Point(-1,-1));
+                using var kernelMat = CvInvoke.GetStructuringElement(ElementShape.Rectangle, new Size(1 + niter, 1 + niter), new Point(-1, -1));
                 using var dilateMat = new Mat();
                 using var segmapMat = ToMatImage<byte>(segmap[$"{sy}:{ey},{sx}:{ex}"]);
                 CvInvoke.Dilate(segmapMat, dilateMat, kernelMat, new Point(-1, -1), -1, BorderType.Default, new MCvScalar());
@@ -144,10 +153,43 @@ namespace ConsoleApp1
                 }
 
                 // make box
-                using var tempArr = np.roll(np.array(np.where(segmap.not_equals(0))), new int[] { 1 }, axis:0);
-                using var np_contours = tempArr.transpose().reshape(-1, 2);
-                //var rectangle = CvInvoke.MinAreaRect(np_contours);
-                //var box = CvInvoke.BoxPoints(rectangle)
+                using var tempArr = np.roll(np.array(np.where(segmap.not_equals(0))), new int[] { 1 }, axis: 0);
+                using var np_contours = tempArr.transpose(0, 1).reshape(-1, 2);
+                var rectangle = CvInvoke.MinAreaRect(ToPointsArray(np_contours));
+                var boxPoints = CvInvoke.BoxPoints(rectangle);
+                var box = FromPointsArray(boxPoints);
+
+                // align diamond-shape
+                var boxW = (float)np.linalg.norm(box[0] - box[1]);
+                var boxH = (float)np.linalg.norm(box[1] - box[2]);
+                var box_ratio = Math.Max(boxW, boxH) / (Math.Min(boxW, boxH) + 1e-5);
+                if (Math.Abs(1 - box_ratio) <= 0.1)
+                {
+                    var l = (float)np.min(np_contours[":,0"]);
+                    var r = (float)np.max(np_contours[":,0"]);
+                    var t = (float)np.min(np_contours[":,1"]);
+                    var b = (float)np.max(np_contours[":,1"]);
+                    box = np.array(new float[,] { { l, t }, { r, t }, { r, b }, { l, b } }, dtype: np.float32);
+                }
+
+                // make clock-wise order
+                var startidx = (int)box.sum(axis: 1).argmin();
+                box = np.roll(box, new int[] { 4 - startidx }, axis: 0);
+                box = np.array(box);
+                boxes.Add(k, ToPointsArray(box));
+                box.Dispose();
+            }
+
+            // render results (optional)
+            var render_img = scoreText.copy();
+            render_img = np.hstack(render_img, scoreLink);
+            using var ret_score_text = cvt2HeatmapImg(render_img);
+            render_img.Dispose();
+
+            CvInvoke.Imwrite("result_2.jpg", ret_score_text);
+            foreach (var box in boxes.Keys)
+            {
+                //CvInvoke.re
             }
         }
 
@@ -232,12 +274,12 @@ namespace ConsoleApp1
             return img;
         }
 
-        private static NDarray cvt2HeatmapImg(NDarray img)
+        private static Mat cvt2HeatmapImg(NDarray img)
         {
             img = (np.clip(img, (NDarray)0, (NDarray)1) * 255).astype(np.uint8);
             var matImg = new Mat();
-            CvInvoke.ApplyColorMap(ToMatImage<float>(img), matImg, ColorMapType.Jet);
-            return ToImageNDarray(matImg, matImg.Cols, matImg.Rows, matImg.NumberOfChannels);
+            CvInvoke.ApplyColorMap(ToMatImage<byte>(img), matImg, ColorMapType.Jet);
+            return matImg;
         }
 
         private static Mat ToMatImage<T>(NDarray npArrary)
@@ -262,11 +304,6 @@ namespace ConsoleApp1
             return DepthType.Cv32F;
         }
 
-        private static NDarray ToImageNDarray(Mat mat)
-        {
-            return ToImageNDarray(mat, mat.Cols, mat.Rows, mat.NumberOfChannels);
-        }
-
         private static NDarray ToImageNDarray<T>(Mat mat)
         {
             return ToImageNDarray<T>(mat, mat.Cols, mat.Rows, mat.NumberOfChannels);
@@ -284,57 +321,24 @@ namespace ConsoleApp1
             return np.reshape(data, height, width, channels);
         }
 
-        private static float[] ToFloatVector(Mat mat)
+        private static PointF[] ToPointsArray(NDarray arr)
         {
-            return ToVectorArray<float>(mat);
-        }
-
-        private static float[,,,] ToFloatImage(NDarray arr)
-        {
-            var result = new float[arr.shape[0], arr.shape[1], arr.shape[2], arr.shape[3]];
+            var points = new List<PointF>();
             for (var i = 0; i < arr.shape[0]; i++)
             {
-                for (var j = 0; j < arr.shape[1]; j++)
-                for (var k = 0; k < arr.shape[2]; k++)
-                for (var c = 0; c < arr.shape[3]; c++)
-                {
-                    result[i, j, k, c] = (float)arr[i, j, k, c];
-                }
+                points.Add(new PointF((float)arr[i, 0], (float)arr[i, 1]));
             }
 
-            return result;
+            return points.ToArray();
         }
 
-        private static T[] ToVectorArray<T>(Mat mat)
+        private static NDarray FromPointsArray(PointF[] points)
         {
-            var result = new T[mat.Size.Width];
-
-            var data = mat.GetData();
-            int i = 0;
-            foreach (var element in data)
+            var result = np.zeros(new Shape(points.Length, 2), np.float32);
+            for (var i = 0; i < points.Length; i++)
             {
-                result[i] = (T)element;
-                i++;
-            }
-
-            return result;
-        }
-
-        private static int[,] ToIntMat(Mat mat)
-        {
-            var result = new int[mat.Rows, mat.Cols];
-
-            var data = mat.GetData();
-            int i = 0, j = 0;
-            foreach (var element in data)
-            {
-                result[i, j] = (int)element;
-                j++;
-                if (j >= mat.Cols)
-                {
-                    i++;
-                    j = 0;
-                }
+                result[i, 0] = (NDarray)points[i].X;
+                result[i, 1] = (NDarray)points[i].Y;
             }
 
             return result;
