@@ -186,11 +186,13 @@ namespace ConsoleApp1
             using var ret_score_text = cvt2HeatmapImg(render_img);
             render_img.Dispose();
 
-            CvInvoke.Imwrite("result_2.jpg", ret_score_text);
-            foreach (var box in boxes.Keys)
+            CvInvoke.Imwrite("result_2_masked.jpg", ret_score_text);
+            foreach (var idx in boxes.Keys)
             {
-                //CvInvoke.re
+                CvInvoke.Polylines(rgbImage, boxes[idx].Select(x => new Point((int)(x.X / resizedDataTuple.Item2), (int)(x.Y / resizedDataTuple.Item2))).ToArray(), true, new MCvScalar(255, 0, 0), thickness: 5);
             }
+
+            CvInvoke.Imwrite("result_2.jpg", rgbImage);
         }
 
         public static NDarray SelectFlags<T>(NDarray input, Func<T, bool> expression)
