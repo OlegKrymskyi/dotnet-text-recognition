@@ -29,14 +29,22 @@ namespace ConsoleApp1
         {
             Console.WriteLine("Hello World!");
 
-            using var imageMat = new Mat("assets/1.jpg", loadType: ImreadModes.Color);
+            using var imageMat = new Mat("assets/test.png", loadType: ImreadModes.Color);
 
             using var rgbImage = new Mat();
             CvInvoke.CvtColor(imageMat, rgbImage, ColorConversion.Bgr2Rgb);
 
             using var inputData = ToImageNDarray<byte>(rgbImage);
+            //var col0 = inputData["0,:,0"].copy();
+            //var col1 = inputData["0,:,1"].copy();
+
+            //inputData["0,:,1"] = col0;
+            //inputData["0,:,0"] = col1;
 
             var resizedDataTuple = resize_aspect_ratio(inputData, 1280, Inter.Linear);
+
+            var ratio_w = 1.0f / resizedDataTuple.Item2;
+            var ratio_h = 1.0f / resizedDataTuple.Item2;
 
             using var resizedImage = resizedDataTuple.Item1;
 
@@ -73,7 +81,7 @@ namespace ConsoleApp1
 
             using Mat textmapMat = ToMatImage<float>(textmap);
             using Mat textScoreThresholded = new Mat();
-            CvInvoke.Threshold(textmapMat, textScoreThresholded, text_threshold, 1, ThresholdType.Binary);
+            CvInvoke.Threshold(textmapMat, textScoreThresholded, low_text, 1, ThresholdType.Binary);
 
             using Mat linkmapMat = ToMatImage<float>(linkmap);
             using Mat linkScoreThresholded = new Mat();
@@ -154,7 +162,7 @@ namespace ConsoleApp1
 
                 // make box
                 using var tempArr = np.roll(np.array(np.where(segmap.not_equals(0))), new int[] { 1 }, axis: 0);
-                using var np_contours = tempArr.transpose(0, 1).reshape(-1, 2);
+                using var np_contours = tempArr.transpose(1, 0).reshape(-1, 2);
                 var rectangle = CvInvoke.MinAreaRect(ToPointsArray(np_contours));
                 var boxPoints = CvInvoke.BoxPoints(rectangle);
                 var box = FromPointsArray(boxPoints);
@@ -176,7 +184,7 @@ namespace ConsoleApp1
                 var startidx = (int)box.sum(axis: 1).argmin();
                 box = np.roll(box, new int[] { 4 - startidx }, axis: 0);
                 box = np.array(box);
-                boxes.Add(k, ToPointsArray(box));
+                boxes.Add(k, AdjustResultCoordinates(ToPointsArray(box), ratio_w, ratio_h));
                 box.Dispose();
             }
 
@@ -189,7 +197,7 @@ namespace ConsoleApp1
             CvInvoke.Imwrite("result_2_masked.jpg", ret_score_text);
             foreach (var idx in boxes.Keys)
             {
-                CvInvoke.Polylines(rgbImage, boxes[idx].Select(x => new Point((int)(x.X / resizedDataTuple.Item2), (int)(x.Y / resizedDataTuple.Item2))).ToArray(), true, new MCvScalar(255, 0, 0), thickness: 5);
+                CvInvoke.Polylines(rgbImage, boxes[idx].Select(x => new Point((int)(x.X), (int)(x.Y))).ToArray(), true, new MCvScalar(255, 0, 0), thickness: 5);
             }
 
             CvInvoke.Imwrite("result_2.jpg", rgbImage);
@@ -239,7 +247,7 @@ namespace ConsoleApp1
                 target_size = square_size;
             }
 
-            var ratio = target_size / Math.Max(height, width);
+            var ratio = target_size / (float)Math.Max(height, width);
 
             var target_h = (int)(height * ratio);
             var target_w = (int)(width * ratio);
@@ -344,6 +352,20 @@ namespace ConsoleApp1
             }
 
             return result;
+        }
+
+        private static PointF[] AdjustResultCoordinates(PointF[] polys, float ratio_w, float ratio_h, float ratio_net = 2)
+        {
+            if (polys.Length > 0)
+            {
+                for (int k = 0; k<polys.Length; k++)
+                {
+                    polys[k].X *= ratio_w * ratio_net;
+                    polys[k].Y *= ratio_h * ratio_net;
+                }
+            }
+
+            return polys;
         }
     }
 }
