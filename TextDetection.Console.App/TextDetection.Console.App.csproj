@@ -17,6 +17,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\TextDetection\TextDetection.csproj" />
+    <ProjectReference Include="..\TextRecognition\TextRecognition.csproj" />
   </ItemGroup>
 
   <ItemGroup>

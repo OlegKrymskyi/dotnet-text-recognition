@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="assets\alphabet_36.txt" />
+    <None Remove="assets\CRNN_VGG_BiLSTM_CTC.onnx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="assets\alphabet_36.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\CRNN_VGG_BiLSTM_CTC.onnx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Emgu.CV" Version="4.5.5.4823" />
+    <PackageReference Include="Emgu.CV.runtime.windows" Version="4.5.5.4823" />
+    <PackageReference Include="Microsoft.ML" Version="1.7.1" />
+    <PackageReference Include="Microsoft.ML.ImageAnalytics" Version="1.7.1" />
+    <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.10.0" />
+    <PackageReference Include="Microsoft.ML.OnnxTransformer" Version="1.7.1" />
+    <PackageReference Include="Numpy" Version="3.7.1.28" />
+  </ItemGroup>
+</Project>

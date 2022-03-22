@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.32002.261
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextDetection", "TextDetection\TextDetection.csproj", "{F1679331-2B00-4623-B71E-998C7C86B73E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextDetection", "TextDetection\TextDetection.csproj", "{F1679331-2B00-4623-B71E-998C7C86B73E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextDetection.Console.App", "TextDetection.Console.App\TextDetection.Console.App.csproj", "{A47FB595-E437-4D68-ADAB-EDB701F06867}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextDetection.Console.App", "TextDetection.Console.App\TextDetection.Console.App.csproj", "{A47FB595-E437-4D68-ADAB-EDB701F06867}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextRecognition", "TextRecognition\TextRecognition.csproj", "{EBF822CD-6EEB-4270-9744-A4799FF90122}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{A47FB595-E437-4D68-ADAB-EDB701F06867}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A47FB595-E437-4D68-ADAB-EDB701F06867}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A47FB595-E437-4D68-ADAB-EDB701F06867}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EBF822CD-6EEB-4270-9744-A4799FF90122}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EBF822CD-6EEB-4270-9744-A4799FF90122}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EBF822CD-6EEB-4270-9744-A4799FF90122}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EBF822CD-6EEB-4270-9744-A4799FF90122}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
