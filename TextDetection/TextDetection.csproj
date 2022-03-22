@@ -14,10 +14,14 @@
 
   <ItemGroup>
     <None Remove="assets\craft-var.onnx" />
+    <None Remove="assets\frozen_east_text_detection.pb" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="assets\craft-var.onnx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="assets\frozen_east_text_detection.pb">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
@@ -29,6 +33,7 @@
     <PackageReference Include="Microsoft.ML.ImageAnalytics" Version="1.7.1" />
     <PackageReference Include="Microsoft.ML.OnnxRuntime" Version="1.10.0" />
     <PackageReference Include="Microsoft.ML.OnnxTransformer" Version="1.7.1" />
+    <PackageReference Include="Microsoft.Spatial" Version="7.10.0" />
     <PackageReference Include="Numpy" Version="3.7.1.28" />
   </ItemGroup>
 </Project>

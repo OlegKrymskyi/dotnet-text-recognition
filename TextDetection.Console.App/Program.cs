@@ -16,7 +16,7 @@ namespace TextDetection.App
         {
             Console.WriteLine("Start detection");
             
-            var detector = new CraftTextDetector();
+            var detector = new EastTextDetector();
             var recognizer = new CrnnTextRecognizer();
 
             var watch = new Stopwatch();
