@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Dnn;
@@ -25,12 +26,25 @@ namespace TextDetection
         {
             using var imageMat = new Mat(imageFile, loadType: ImreadModes.Color);
 
-            var result = new VectorOfVectorOfPoint();
+            var boxes = new VectorOfVectorOfPoint();
             var confidences = new VectorOfFloat();
-            this.detector.Detect(imageMat, result, confidences);
+            this.detector.Detect(imageMat, boxes, confidences);
+
+            var result = new Dictionary<int, PointF[]>();
+            for (var i = 0; i < boxes.Size; i++)
+            {
+                var points = new List<PointF>();
+                for (var j = 0; j < boxes[i].Size; j++)
+                {
+                    points.Add(new PointF(boxes[i][j].X, boxes[i][j].Y));
+                }
+
+                result.Add(i + 1, points.ToArray());
+            }
 
             return new TextDetectionResultModel
             {
+                Boxes = result
             };
         }
     }

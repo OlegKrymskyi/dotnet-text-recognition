@@ -18,7 +18,7 @@ namespace TextRecognition
             this.inputSize = new Size(100, 32);
             this.model = new TextRecognitionModel(modelFile);
 
-            this.model.Vocabulary = File.ReadAllText(vocabularyFile).Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
+            this.model.Vocabulary = File.ReadAllText(vocabularyFile).Split(new string[] { "\n" }, StringSplitOptions.RemoveEmptyEntries);
             this.model.DecodeType = "CTC-greedy";
 
             this.model.SetInputScale(1.0 / 127.5);
@@ -28,7 +28,7 @@ namespace TextRecognition
 
         public string Recognize(Mat image, PointF[] box)
         {
-            PointF[] targetVertices = new PointF[]
+            var targetVertices = new PointF[]
             {
                 new PointF(0, this.inputSize.Height - 1),
                 new PointF(0, 0),
@@ -37,12 +37,12 @@ namespace TextRecognition
             };
             using var rotationMatrix = CvInvoke.GetPerspectiveTransform(box, targetVertices);
 
-            Mat cropped = new Mat();
+            var cropped = new Mat();
             CvInvoke.WarpPerspective(image, cropped, rotationMatrix, this.inputSize);
 
-            cropped.Save("cropped.jpg");
+            var result = model.Recognize(cropped);
 
-            return model.Recognize(cropped);
+            return result;
         }
     }
 }
