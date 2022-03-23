@@ -16,12 +16,16 @@ namespace TextDetection.App
         {
             Console.WriteLine("Start detection");
             
-            var detector = new EastTextDetector();
+            var detector = new EastTextDetector(width: 1280, height: 1280);
             var recognizer = new CrnnTextRecognizer();
+
+            using var imageMat = new Mat("assets/data/screen.png", loadType: ImreadModes.Color);
+            using var resizedMat = new Mat();
+            CvInvoke.Resize(imageMat, resizedMat, new Size(1280, 1280));
 
             var watch = new Stopwatch();
             watch.Start();
-            using var result = detector.DetectTexts("assets/1.jpg");
+            using var result = detector.DetectTexts(resizedMat);
             watch.Stop();
 
             Console.WriteLine($"Detection took: {watch.Elapsed}");
@@ -36,11 +40,11 @@ namespace TextDetection.App
                 CvInvoke.Imwrite("result_1_masked.jpg", ret_score_text);
             }
 
-            using var rgbImage = new Mat("assets/1.jpg", loadType: ImreadModes.Color);
-            using var grayImage = new Mat("assets/1.jpg", loadType: ImreadModes.Grayscale);
+            using var grayImage = new Mat();
+            CvInvoke.CvtColor(resizedMat, grayImage, ColorConversion.Bgr2Gray);
             foreach (var idx in result.Boxes.Keys)
             {
-                CvInvoke.Polylines(rgbImage, result.Boxes[idx].Select(x => new Point((int)(x.X), (int)(x.Y))).ToArray(), true, new MCvScalar(255, 0, 0), thickness: 5);
+                CvInvoke.Polylines(resizedMat, result.Boxes[idx].Select(x => new Point((int)(x.X), (int)(x.Y))).ToArray(), true, new MCvScalar(255, 0, 0), thickness: 5);
                 var text = recognizer.Recognize(grayImage, result.Boxes[idx]);
 
                 if (!string.IsNullOrWhiteSpace(text))
@@ -49,7 +53,7 @@ namespace TextDetection.App
                 }
             }
 
-            CvInvoke.Imwrite("result_1.jpg", rgbImage);
+            CvInvoke.Imwrite("result_1.jpg", resizedMat);
         }
     }
 }

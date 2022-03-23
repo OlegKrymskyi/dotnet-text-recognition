@@ -26,6 +26,18 @@ namespace TextDetection
         {
             using var imageMat = new Mat(imageFile, loadType: ImreadModes.Color);
 
+            return DetectTexts(imageMat);
+        }
+
+        public TextDetectionResultModel DetectTexts(Bitmap bitmap)
+        {
+            using var imageMat = bitmap.FromBitmap();
+
+            return DetectTexts(imageMat);
+        }
+
+        public TextDetectionResultModel DetectTexts(Mat imageMat)
+        {
             var boxes = new VectorOfVectorOfPoint();
             var confidences = new VectorOfFloat();
             this.detector.Detect(imageMat, boxes, confidences);
