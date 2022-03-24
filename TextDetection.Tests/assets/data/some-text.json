@@ -1,0 +1,50 @@
+﻿{
+  "Boxes": {
+    "1": [
+      {
+        "IsEmpty": false,
+        "X": 174.0,
+        "Y": 165.0
+      },
+      {
+        "IsEmpty": false,
+        "X": 174.0,
+        "Y": 153.0
+      },
+      {
+        "IsEmpty": false,
+        "X": 226.0,
+        "Y": 152.0
+      },
+      {
+        "IsEmpty": false,
+        "X": 226.0,
+        "Y": 165.0
+      }
+    ],
+    "2": [
+      {
+        "IsEmpty": false,
+        "X": 232.0,
+        "Y": 165.0
+      },
+      {
+        "IsEmpty": false,
+        "X": 232.0,
+        "Y": 151.0
+      },
+      {
+        "IsEmpty": false,
+        "X": 271.0,
+        "Y": 150.0
+      },
+      {
+        "IsEmpty": false,
+        "X": 272.0,
+        "Y": 164.0
+      }
+    ]
+  },
+  "ScoreText": null,
+  "ScoreLink": null
+}
