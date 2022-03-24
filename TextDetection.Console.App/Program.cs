@@ -17,7 +17,7 @@ namespace TextDetection.App
             Console.WriteLine("Start detection");
 
             var size = new Size(1280, 1280);
-            using var imageMat = new Mat("assets/data/screen.png", loadType: ImreadModes.Color);
+            using var imageMat = new Mat("assets/1.jpg", loadType: ImreadModes.Color);
             using var resizedMat = new Mat();
             CvInvoke.Resize(imageMat, resizedMat, size);
 
