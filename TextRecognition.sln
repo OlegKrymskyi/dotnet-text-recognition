@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextDetection.Console.App",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextRecognition", "TextRecognition\TextRecognition.csproj", "{EBF822CD-6EEB-4270-9744-A4799FF90122}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextRecognition.Tests", "TextRecognition.Tests\TextRecognition.Tests.csproj", "{7A83C767-D3AE-44A6-8845-0790CC16E994}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextRecognition.Tests", "TextRecognition.Tests\TextRecognition.Tests.csproj", "{7A83C767-D3AE-44A6-8845-0790CC16E994}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextDetection.Tests", "TextDetection.Tests\TextDetection.Tests.csproj", "{87618484-8408-43D9-8271-E6668CFA8568}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{7A83C767-D3AE-44A6-8845-0790CC16E994}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A83C767-D3AE-44A6-8845-0790CC16E994}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A83C767-D3AE-44A6-8845-0790CC16E994}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87618484-8408-43D9-8271-E6668CFA8568}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87618484-8408-43D9-8271-E6668CFA8568}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87618484-8408-43D9-8271-E6668CFA8568}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87618484-8408-43D9-8271-E6668CFA8568}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
