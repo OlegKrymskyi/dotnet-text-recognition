@@ -15,13 +15,14 @@ namespace TextDetection.App
         static void Main(string[] args)
         {
             Console.WriteLine("Start detection");
-            
-            var detector = new EastTextDetector(width: 1280, height: 1280);
-            var recognizer = new CrnnTextRecognizer();
 
+            var size = new Size(1280, 1280);
             using var imageMat = new Mat("assets/data/screen.png", loadType: ImreadModes.Color);
             using var resizedMat = new Mat();
-            CvInvoke.Resize(imageMat, resizedMat, new Size(1280, 1280));
+            CvInvoke.Resize(imageMat, resizedMat, size);
+
+            var detector = new EastTextDetector(width: size.Width, height: size.Height);
+            var recognizer = new CrnnTextRecognizer();
 
             var watch = new Stopwatch();
             watch.Start();
