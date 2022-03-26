@@ -7,8 +7,10 @@ using Emgu.CV.Structure;
 
 namespace TextRecognition
 {
-    public class CrnnTextRecognizer
+    public class CrnnTextRecognizer: IDisposable
     {
+        private bool disposed = false;
+
         private readonly TextRecognitionModel model;
 
         private readonly Size inputSize;
@@ -24,6 +26,28 @@ namespace TextRecognition
             this.model.SetInputScale(1.0 / 127.5);
             this.model.SetInputMean(new MCvScalar(127.5, 127.5, 127.5));
             this.model.SetInputSize(this.inputSize);
+        }
+
+        ~CrnnTextRecognizer()
+        {
+            this.Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (this.disposed)
+            {
+                return;
+            }
+
+            this.model.Dispose();
+            this.disposed = true;
         }
 
         public string Recognize(Mat image, PointF[] box)

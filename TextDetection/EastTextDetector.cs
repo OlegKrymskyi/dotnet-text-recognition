@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
@@ -8,8 +9,10 @@ using TextDetection.Models;
 
 namespace TextDetection
 {
-    public class EastTextDetector
+    public class EastTextDetector: IDisposable
     {
+        private bool disposed = false;
+
         private readonly TextDetectionModel_EAST detector;
 
         public EastTextDetector(string modelPath = "assets/frozen_east_text_detection.pb", int width = 1280, int height = 1280, float confidenceThreshold = 0.5f, float nmsThreshold = 0.4f)
@@ -58,6 +61,28 @@ namespace TextDetection
             {
                 Boxes = result
             };
+        }
+
+        ~EastTextDetector()
+        {
+            this.Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            this.Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        public void Dispose(bool disposing)
+        {
+            if (this.disposed)
+            {
+                return;
+            }
+
+            this.detector.Dispose();
+            this.disposed = true;
         }
     }
 }
