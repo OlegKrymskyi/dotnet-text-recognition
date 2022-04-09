@@ -15,6 +15,8 @@ jobs:
           dotnet-version: ${{ matrix.dotnet-version }}
         env:
           NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY}}
+      - name: Open src dir
+      - run: cd src
       - name: Install dependencies
         run: dotnet restore
       - name: Build
@@ -22,10 +24,10 @@ jobs:
       - name: Test
         run: dotnet test --no-restore --verbosity normal
       - name: Create the TextDetection package
-        run: dotnet pack --configuration Release src/TextDetection/TextDetection.csproj
+        run: dotnet pack --configuration Release TextDetection/TextDetection.csproj
       - name: Publish the TextDetection package to GPR
-        run: dotnet nuget push src/TextDetection/bin/Release/*.nupkg
+        run: dotnet nuget push TextDetection/bin/Release/*.nupkg
       - name: Create the TextRecognition package
-        run: dotnet pack --configuration Release src/TextRecognition/TextRecognition.csproj
+        run: dotnet pack --configuration Release TextRecognition/TextRecognition.csproj
       - name: Publish the TextRecognition package to GPR
-        run: dotnet nuget push src/TextRecognition/bin/Release/*.nupkg
+        run: dotnet nuget push TextRecognition/bin/Release/*.nupkg
