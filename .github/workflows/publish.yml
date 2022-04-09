@@ -1,0 +1,29 @@
+name: dotnet package
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dotnet-version: ["5.0.x"]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: ${{ matrix.dotnet-version }}
+      - name: Install dependencies
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+      - name: Test
+        run: dotnet test --no-restore --verbosity normal
+      - name: Create the TextDetection package
+        run: dotnet pack --configuration Release src/TextDetection/TextDetection.csproj
+      - name: Publish the TextDetection package to GPR
+        run: dotnet nuget push src/TextDetection/bin/Release/*.nupkg
+      - name: Create the TextRecognition package
+        run: dotnet pack --configuration Release src/TextRecognition/TextRecognition.csproj
+      - name: Publish the TextRecognition package to GPR
+        run: dotnet nuget push src/TextRecognition/bin/Release/*.nupkg
