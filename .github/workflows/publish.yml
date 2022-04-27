@@ -17,12 +17,10 @@ jobs:
           NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY}}
       - name: Open src dir
         run: cd src
-      - name: Install dependencies
-        run: dotnet restore TextRecognition.sln
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release
       - name: Test
-        run: dotnet test --no-restore --verbosity normal
+        run: dotnet tests --verbosity normal
       - name: Create the TextDetection package
         run: dotnet pack --configuration Release TextDetection/TextDetection.csproj
       - name: Publish the TextDetection package to GPR
