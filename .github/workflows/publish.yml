@@ -18,7 +18,7 @@ jobs:
       - name: Open src dir
         run: cd src
       - name: Install dependencies
-        run: dotnet restore
+        run: dotnet restore TextRecognition.sln
       - name: Build
         run: dotnet build --configuration Release --no-restore
       - name: Test
