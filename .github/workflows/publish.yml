@@ -10,8 +10,6 @@ jobs:
     steps:
       - name: checkout
         uses: actions/checkout@v3
-      - name: list
-        run: ls
       - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
         uses: actions/setup-dotnet@v2
         with:
@@ -20,6 +18,8 @@ jobs:
           NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY}}
       - name: Open src dir
         run: cd src
+      - name: list
+        run: ls
       - name: Build
         run: dotnet build --configuration Release
       - name: Test
