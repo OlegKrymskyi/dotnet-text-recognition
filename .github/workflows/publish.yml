@@ -24,7 +24,7 @@ jobs:
       - name: Build
         run: dotnet build --configuration Release
       - name: Test
-        run: dotnet test --verbosity normal --no-build
+        run: dotnet test --verbosity normal
       - name: Create the package
         run: dotnet pack --configuration Release src/TextDetection.csproj
       - name: Publish the package to GPR
