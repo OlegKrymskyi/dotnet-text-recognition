@@ -16,7 +16,7 @@ jobs:
         env:
           NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY}}
       - name: Open src dir
-      - run: cd src
+        run: cd src
       - name: Install dependencies
         run: dotnet restore
       - name: Build
