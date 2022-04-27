@@ -1,7 +1,7 @@
 name: dotnet package
 on: [push]
 jobs:
-  text-detection:
+  publish:
     runs-on: self-hosted
     strategy:
       matrix:
@@ -15,42 +15,13 @@ jobs:
           dotnet-version: ${{ matrix.dotnet-version }}
         env:
           NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY}}
-      - name: Open src/TextDetection dir
-        run: cd src/TextDetection
-      - name: Install dependencies
-        run: dotnet restore
+      - name: Open src dir
+        run: cd src
       - name: Build
-        run: dotnet build --configuration Release --no-restore
+        run: dotnet build --configuration Release
       - name: Test
-        run: dotnet test --no-restore --verbosity normal
+        run: dotnet test --verbosity normal --no-build
       - name: Create the package
-        run: dotnet pack --configuration Release TextDetection.csproj
+        run: dotnet pack --configuration Release src/TextDetection.csproj
       - name: Publish the package to GPR
-        run: dotnet nuget push bin/Release/*.nupkg
-
-  text-recognition:
-    runs-on: self-hosted
-    strategy:
-      matrix:
-        dotnet-version: ["5.0.x"]
-
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup .NET Core SDK ${{ matrix.dotnet-version }}
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: ${{ matrix.dotnet-version }}
-        env:
-          NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY}}
-      - name: Open src/TextRecognition dir
-        run: cd src/TextRecognition
-      - name: Install dependencies
-        run: dotnet restore
-      - name: Build
-        run: dotnet build --configuration Release --no-restore
-      - name: Test
-        run: dotnet test --no-restore --verbosity normal
-      - name: Create the package
-        run: dotnet pack --configuration Release TextRecognition.csproj
-      - name: Publish the package to GPR
-        run: dotnet nuget push bin/Release/*.nupkg
+        run: dotnet nuget push TextDetection/bin/Release/*.nupkg
