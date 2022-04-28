@@ -66,7 +66,7 @@ namespace TextRecognition
 
             var result = model.Recognize(cropped);
 
-            return result;
+            return result.Replace("\r", string.Empty);
         }
     }
 }
