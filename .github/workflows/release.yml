@@ -33,9 +33,13 @@ jobs:
         run: dotnet build --configuration Release
       - name: Test
         run: dotnet test --verbosity normal
-      - name: Create the package
+      - name: Create detection package
         run: dotnet pack --configuration Release Ok.TextRecognition.Detection/Ok.TextRecognition.Detection.csproj
-      - name: Publish the package
+      - name: Publish detection package
         run: dotnet nuget push Ok.TextRecognition.Detection/bin/Release/Ok.TextRecognition.Detection.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_AUTH_TOKEN}
+      - name: Create recognition package
+        run: dotnet pack --configuration Release Ok.TextRecognition.Recognition/Ok.TextRecognition.Recognition.csproj
+      - name: Publish recognition
+        run: dotnet nuget push Ok.TextRecognition.Recognition/bin/Release/Ok.TextRecognition.Recognition.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_AUTH_TOKEN}
         env:
           NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY}}
