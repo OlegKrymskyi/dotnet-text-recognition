@@ -34,6 +34,8 @@ jobs:
         run: dotnet pack --configuration Release Ok.TextRecognition.Detection/Ok.TextRecognition.Detection.csproj
       - name: Publish detection package
         run: dotnet nuget push Ok.TextRecognition.Detection/bin/Release/Ok.TextRecognition.Detection.${VERSION}.nupkg --source https://api.nuget.org/v3/index.json --api-key ${NUGET_AUTH_TOKEN}
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY}}
       - name: Create recognition package
         run: dotnet pack --configuration Release Ok.TextRecognition.Recognition/Ok.TextRecognition.Recognition.csproj
       - name: Publish recognition package
