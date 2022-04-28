@@ -1,11 +1,16 @@
 # Text Recognition
 Text recognition exercise could be splitted into two part: text detection and text recognition itself.
 
+<img width="1000" alt="teaser" src="./docs/assets/img/result_1.jpg">
+
 The detected text could be easily recognized with the one of the trained CRNN networks. Take a look on https://drive.google.com/drive/folders/1cTbQ3nuZG-EKWak6emD_s8_hHXWz7lAr
 
 ## Text Detection
 ### CRAFT: Character-Region Awareness For Text detection
 Official Pytorch implementation of CRAFT text detector | [Paper](https://arxiv.org/abs/1904.01941) | [Pretrained Model](https://drive.google.com/open?id=1Jk4eGD7crsqCCg9C9VjCLkMN3ze8kutZ) | [Supplementary](https://youtu.be/HI8MzpY8KMI)
+
+Here is the text detection CRAFT Heatmap 
+<img width="1000" alt="teaser" src="./docs/assets/img/result_1_masked.jpg">
 
 ### EAST
 
