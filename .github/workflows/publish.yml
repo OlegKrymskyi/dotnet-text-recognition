@@ -31,4 +31,4 @@ jobs:
       - name: Create the package
         run: dotnet pack --configuration Release TextDetection/TextDetection.csproj
       - name: Publish the package to GPR
-        run: dotnet nuget push TextDetection/bin/Release/*.nupkg -s https://api.nuget.org/v3/index.json
+        run: dotnet nuget push TextDetection/bin/Release/TextDetection.nupkg -s https://api.nuget.org/v3/index.json
