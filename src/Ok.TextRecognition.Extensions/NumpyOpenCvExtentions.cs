@@ -6,7 +6,7 @@ using Emgu.CV.CvEnum;
 using Numpy;
 using Numpy.Models;
 
-namespace TextDetection
+namespace Ok.TextRecognition
 {
     public static class NumpyOpenCvExtentions
     {

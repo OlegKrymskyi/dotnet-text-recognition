@@ -50,6 +50,13 @@ namespace TextRecognition
             this.disposed = true;
         }
 
+        public string Recognize(Bitmap image, PointF[] box)
+        {
+            using var grayScale = image.ToImage<Gray, byte>();
+
+            return Recognize(grayScale.Mat, box);
+        }
+
         public string Recognize(Mat image, PointF[] box)
         {
             var targetVertices = new PointF[]

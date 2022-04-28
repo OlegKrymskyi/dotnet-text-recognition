@@ -1,18 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Drawing;
 using Emgu.CV;
-using Emgu.CV.CvEnum;
 using Emgu.CV.Dnn;
 using Emgu.CV.Util;
-using TextDetection.Models;
+using Ok.TextRecognition.Detection.Models;
 
-namespace TextDetection
+namespace Ok.TextRecognition.Detection
 {
-    public class EastTextDetector: IDisposable
+    public class EastTextDetector: TextDetector
     {
-        private bool disposed = false;
-
         private readonly TextDetectionModel_EAST detector;
 
         public EastTextDetector(string modelPath = "assets/frozen_east_text_detection.pb", int width = 1280, int height = 1280, float confidenceThreshold = 0.5f, float nmsThreshold = 0.4f)
@@ -25,21 +21,7 @@ namespace TextDetection
             this.detector.SetInputMean(new Emgu.CV.Structure.MCvScalar(123.68, 116.78, 103.94));
         }
 
-        public TextDetectionResultModel DetectTexts(string imageFile)
-        {
-            using var imageMat = new Mat(imageFile, loadType: ImreadModes.Color);
-
-            return DetectTexts(imageMat);
-        }
-
-        public TextDetectionResultModel DetectTexts(Bitmap bitmap)
-        {
-            using var imageMat = bitmap.FromBitmap();
-
-            return DetectTexts(imageMat);
-        }
-
-        public TextDetectionResultModel DetectTexts(Mat imageMat)
+        public override TextDetectionResultModel DetectTexts(Mat imageMat)
         {
             var boxes = new VectorOfVectorOfPoint();
             var confidences = new VectorOfFloat();
@@ -63,26 +45,10 @@ namespace TextDetection
             };
         }
 
-        ~EastTextDetector()
+        protected override void Release()
         {
-            this.Dispose(false);
-        }
-
-        public void Dispose()
-        {
-            this.Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        public void Dispose(bool disposing)
-        {
-            if (this.disposed)
-            {
-                return;
-            }
-
+            base.Release();
             this.detector.Dispose();
-            this.disposed = true;
         }
     }
 }

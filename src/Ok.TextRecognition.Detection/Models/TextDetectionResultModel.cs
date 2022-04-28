@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using Numpy;
 
-namespace TextDetection.Models
+namespace Ok.TextRecognition.Detection.Models
 {
     public class TextDetectionResultModel : IDisposable
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using Numpy;
 
-namespace TextDetection.Models
+namespace Ok.TextRecognition.Detection.Models
 {
     public class ImageResizeOutputModel: IDisposable
     {

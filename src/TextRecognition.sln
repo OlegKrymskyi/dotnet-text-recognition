@@ -3,15 +3,17 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.32002.261
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextDetection", "TextDetection\TextDetection.csproj", "{F1679331-2B00-4623-B71E-998C7C86B73E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ok.TextRecognition.Detection", "Ok.TextRecognition.Detection\Ok.TextRecognition.Detection.csproj", "{1349D922-850A-41A7-98BA-2B13384AA742}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextDetection.Console.App", "TextDetection.Console.App\TextDetection.Console.App.csproj", "{A47FB595-E437-4D68-ADAB-EDB701F06867}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ok.TextRecognition.Detection.Tests", "Ok.TextRecognition.Detection.Tests\Ok.TextRecognition.Detection.Tests.csproj", "{D26D9397-1F15-4466-9828-DA8A1A525939}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextRecognition", "TextRecognition\TextRecognition.csproj", "{EBF822CD-6EEB-4270-9744-A4799FF90122}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ok.TextRecognition.Recognition", "Ok.TextRecognition.Recognition\Ok.TextRecognition.Recognition.csproj", "{80FF1E82-393A-4C75-B29E-FA72ED1DADDD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TextRecognition.Tests", "TextRecognition.Tests\TextRecognition.Tests.csproj", "{7A83C767-D3AE-44A6-8845-0790CC16E994}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ok.TextRecognition.Recognition.Tests", "Ok.TextRecognition.Recognition.Tests\Ok.TextRecognition.Recognition.Tests.csproj", "{8F52A9AA-1465-4455-B3BC-75BB1DFF6D51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TextDetection.Tests", "TextDetection.Tests\TextDetection.Tests.csproj", "{87618484-8408-43D9-8271-E6668CFA8568}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ok.TextRecognition.Console.App", "Ok.TextRecognition.Console.App\Ok.TextRecognition.Console.App.csproj", "{0BDE6EE4-34E0-424E-961E-5F936547CA1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ok.TextRecognition.Extensions", "Ok.TextRecognition.Extensions\Ok.TextRecognition.Extensions.csproj", "{710C7C45-A146-48DD-BFF5-01593727C378}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,26 +21,30 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{F1679331-2B00-4623-B71E-998C7C86B73E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F1679331-2B00-4623-B71E-998C7C86B73E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F1679331-2B00-4623-B71E-998C7C86B73E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F1679331-2B00-4623-B71E-998C7C86B73E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A47FB595-E437-4D68-ADAB-EDB701F06867}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A47FB595-E437-4D68-ADAB-EDB701F06867}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A47FB595-E437-4D68-ADAB-EDB701F06867}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A47FB595-E437-4D68-ADAB-EDB701F06867}.Release|Any CPU.Build.0 = Release|Any CPU
-		{EBF822CD-6EEB-4270-9744-A4799FF90122}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{EBF822CD-6EEB-4270-9744-A4799FF90122}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{EBF822CD-6EEB-4270-9744-A4799FF90122}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{EBF822CD-6EEB-4270-9744-A4799FF90122}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7A83C767-D3AE-44A6-8845-0790CC16E994}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7A83C767-D3AE-44A6-8845-0790CC16E994}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7A83C767-D3AE-44A6-8845-0790CC16E994}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7A83C767-D3AE-44A6-8845-0790CC16E994}.Release|Any CPU.Build.0 = Release|Any CPU
-		{87618484-8408-43D9-8271-E6668CFA8568}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{87618484-8408-43D9-8271-E6668CFA8568}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{87618484-8408-43D9-8271-E6668CFA8568}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{87618484-8408-43D9-8271-E6668CFA8568}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1349D922-850A-41A7-98BA-2B13384AA742}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1349D922-850A-41A7-98BA-2B13384AA742}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1349D922-850A-41A7-98BA-2B13384AA742}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1349D922-850A-41A7-98BA-2B13384AA742}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D26D9397-1F15-4466-9828-DA8A1A525939}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D26D9397-1F15-4466-9828-DA8A1A525939}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D26D9397-1F15-4466-9828-DA8A1A525939}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D26D9397-1F15-4466-9828-DA8A1A525939}.Release|Any CPU.Build.0 = Release|Any CPU
+		{80FF1E82-393A-4C75-B29E-FA72ED1DADDD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{80FF1E82-393A-4C75-B29E-FA72ED1DADDD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{80FF1E82-393A-4C75-B29E-FA72ED1DADDD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{80FF1E82-393A-4C75-B29E-FA72ED1DADDD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8F52A9AA-1465-4455-B3BC-75BB1DFF6D51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8F52A9AA-1465-4455-B3BC-75BB1DFF6D51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8F52A9AA-1465-4455-B3BC-75BB1DFF6D51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8F52A9AA-1465-4455-B3BC-75BB1DFF6D51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BDE6EE4-34E0-424E-961E-5F936547CA1A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BDE6EE4-34E0-424E-961E-5F936547CA1A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BDE6EE4-34E0-424E-961E-5F936547CA1A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BDE6EE4-34E0-424E-961E-5F936547CA1A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{710C7C45-A146-48DD-BFF5-01593727C378}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{710C7C45-A146-48DD-BFF5-01593727C378}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{710C7C45-A146-48DD-BFF5-01593727C378}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{710C7C45-A146-48DD-BFF5-01593727C378}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

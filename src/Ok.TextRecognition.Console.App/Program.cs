@@ -6,9 +6,10 @@ using Emgu.CV;
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Numpy;
+using Ok.TextRecognition.Detection;
 using TextRecognition;
 
-namespace TextDetection.App
+namespace Ok.TextRecognition.App
 {
     class Program
     {
@@ -25,7 +26,7 @@ namespace TextDetection.App
             CvInvoke.Resize(imageMat, resizedMat, size);
 
             var detector = new EastTextDetector(width: size.Width, height: size.Height);
-            var recognizer = new CrnnTextRecognizer();
+            using var recognizer = new CrnnTextRecognizer();
 
             var watch = new Stopwatch();
             watch.Start();

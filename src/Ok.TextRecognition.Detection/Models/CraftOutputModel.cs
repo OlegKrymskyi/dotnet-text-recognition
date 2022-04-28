@@ -1,6 +1,6 @@
 ﻿using Microsoft.ML.Data;
 
-namespace TextDetection.Models
+namespace Ok.TextRecognition.Detection.Models
 {
     internal class CraftOutputModel
     {

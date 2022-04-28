@@ -6,9 +6,9 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Microsoft.ML;
 using Numpy;
-using TextDetection.Models;
+using Ok.TextRecognition.Detection.Models;
 
-namespace TextDetection
+namespace Ok.TextRecognition.Detection
 {
     /// <summary>
     /// Represents class which is using trained CRAFT network model to detect texts on the image.
@@ -36,7 +36,7 @@ namespace TextDetection
             var dataView = mlContext.Data.LoadFromEnumerable(new List<CraftInputModel>());
 
             var pipeline = mlContext.Transforms.ApplyOnnxModel(
-                    modelFile: "assets/craft-var.onnx",
+                    modelFile: this.modelFile,
                     outputColumnNames: new[] {
                                "output"},
                     inputColumnNames: new[] {
