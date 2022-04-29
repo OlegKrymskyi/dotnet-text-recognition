@@ -19,7 +19,7 @@ jobs:
       - name: Check nuget access key
         env:
           NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY}}
-        run: echo ${NUGET_AUTH_TOKEN}
+        run: echo $NUGET_AUTH_TOKEN
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build
