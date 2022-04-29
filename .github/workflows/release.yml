@@ -22,9 +22,9 @@ jobs:
           dotnet-version: ${{ matrix.dotnet-version }}
       - name: Verify commit exists in origin/master
         run: git branch --remote --contains | Select-String 'origin/master'
-      - name: Set VERSION variable from tag
+      - name: Set version variable from tag
         id: branch
-        run: echo ::set-output version=VERSION::${GITHUB_REF#refs/tags/}
+        run: echo ::set-output name=version::${GITHUB_REF#refs/tags/}
       - name: Build
         run: dotnet build --configuration Release
       - name: Test
