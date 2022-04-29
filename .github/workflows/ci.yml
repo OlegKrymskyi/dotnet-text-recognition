@@ -18,6 +18,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+      - name: Echo git ref
+        run: echo $GITHUB_REF
+      - name: Echo git ref 2
+        env:
+          REF: ${{ github.ref }}
+        run: echo $env:REF
+      - name: Echo git tags
+        run: echo ${GITHUB_REF/refs\/tags\//}
       - name: Build
         run: dotnet build --configuration Release
       - name: Test
