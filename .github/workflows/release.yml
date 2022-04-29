@@ -25,6 +25,10 @@ jobs:
       - name: Set version variable from tag
         id: branch
         run: echo ::set-output name=version::${GITHUB_REF#refs/tags/}
+      - name: Echo version variable
+        env:
+          VERSION: ${{ steps.branch.outputs.version }}
+        run: echo $env:VERSION
       - name: Build
         run: dotnet build --configuration Release
       - name: Test
