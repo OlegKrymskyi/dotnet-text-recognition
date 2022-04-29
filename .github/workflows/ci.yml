@@ -16,10 +16,6 @@ jobs:
         working-directory: ./src
     timeout-minutes: 15
     steps:
-      - name: Check nuget access key
-        env:
-          NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY}}
-        run: echo $env:NUGET_AUTH_TOKEN
       - name: Checkout
         uses: actions/checkout@v2
       - name: Build
