@@ -24,8 +24,10 @@ jobs:
         run: git branch --remote --contains | Select-String 'origin/master'
       - name: Set VERSION variable from tag
         run: echo "VERSION=${GITHUB_REF/refs\/tags\/v/}" >> $GITHUB_ENV
-      - name: List
-        run: ls
+      - name: Check nuget access key
+        env:
+          NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY}}
+        run: echo ${NUGET_AUTH_TOKEN}
       - name: Build
         run: dotnet build --configuration Release
       - name: Test
