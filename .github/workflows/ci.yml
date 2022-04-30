@@ -23,9 +23,19 @@ jobs:
       - name: Echo git ref
         run: echo $env:GITHUB_REF
       - name: Echo git tags 2
-        run: echo $env:GITHUB_REF -replace 'refs\/tags\/'
+        id: tag2
+        run: echo ::set-output name=version::$env:GITHUB_REF.replace('refs/tags/')
+      - name: echo tag
+        env:
+          VERSION: ${{ steps.branch.tag2.version }}
+        run: echo $env:VERSION
       - name: Echo git tags
-        run: echo $(git describe --tags --abbrev=0)
+        id: tag
+        run: echo ::set-output name=version::$(git describe --tags --abbrev=0)
+      - name: print tag
+        env:
+          VERSION: ${{ steps.branch.tag.version }}
+        run: echo $env:VERSION
       - name: Build
         run: dotnet build --configuration Release
       - name: Test
