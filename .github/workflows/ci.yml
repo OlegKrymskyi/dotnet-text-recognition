@@ -24,17 +24,17 @@ jobs:
         run: echo $env:GITHUB_REF
       - name: Echo git tags 2
         id: tag2
-        run: echo ::set-output name=version::$env:GITHUB_REF.replace('refs/tags/')
+        run: echo ::set-output name=version::$($env:GITHUB_REF).replace('refs/tags/')
       - name: echo tag
         env:
-          VERSION: ${{ steps.branch.tag2.version }}
+          VERSION: ${{ steps.tag2.outputs.version }}
         run: echo $env:VERSION
       - name: Echo git tags
         id: tag
         run: echo ::set-output name=version::$(git describe --tags --abbrev=0)
       - name: print tag
         env:
-          VERSION: ${{ steps.branch.tag.version }}
+          VERSION: ${{ steps.tag.outputs.version }}
         run: echo $env:VERSION
       - name: Build
         run: dotnet build --configuration Release
