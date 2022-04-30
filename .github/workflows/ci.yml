@@ -22,6 +22,8 @@ jobs:
         run: echo $env:GITHUB_REF
       - name: Echo git tags
         run: echo ${env:GITHUB_REF/refs\/tags\//}
+      - name: Echo git tags 2
+        run: echo echo $env:GITHUB_REF | cut -d / -f 3
       - name: Build
         run: dotnet build --configuration Release
       - name: Test
