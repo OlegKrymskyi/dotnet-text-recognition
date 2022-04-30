@@ -7,7 +7,7 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Numpy;
 using Ok.TextRecognition.Detection;
-using TextRecognition;
+using Ok.TextRecognition.Recognition;
 
 namespace Ok.TextRecognition.App
 {

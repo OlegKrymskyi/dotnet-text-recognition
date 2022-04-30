@@ -5,7 +5,7 @@ using Emgu.CV;
 using Emgu.CV.Dnn;
 using Emgu.CV.Structure;
 
-namespace TextRecognition
+namespace Ok.TextRecognition.Recognition
 {
     public class CrnnTextRecognizer: IDisposable
     {

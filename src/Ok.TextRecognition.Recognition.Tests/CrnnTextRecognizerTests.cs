@@ -5,7 +5,7 @@ using Emgu.CV.CvEnum;
 using FluentAssertions;
 using Xunit;
 
-namespace TextRecognition.Tests
+namespace Ok.TextRecognition.Recognition.Tests
 {
     public class CrnnTextRecognizerTests
     {
