@@ -20,30 +20,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Echo git ref
-        run: echo $env:GITHUB_REF
-      - name: get git tag
-        uses: olegtarasov/get-tag@v2.1
-        id: tagName
-        with:
-          tagRegex: "(.*)" # Optional. Returns specified group text as tag name. Full tag string is returned if regex is not defined.
-          tagRegexGroup: 1 # Optional. Default is 1.
-      - name: Some other step # Output usage example
-        run: echo $env:GIT_TAG_NAME
-      - name: Echo git tags 2
-        id: tag2
-        run: echo ::set-output name=version::$($env:GITHUB_REF).replace('refs/tags/')
-      - name: echo tag
-        env:
-          VERSION: ${{ steps.tag2.outputs.version }}
-        run: echo $env:VERSION
-      - name: Echo git tags
-        id: tag
-        run: echo ::set-output name=version::$(git describe --tags --abbrev=0)
-      - name: print tag
-        env:
-          VERSION: ${{ steps.tag.outputs.version }}
-        run: echo $env:VERSION
       - name: Build
         run: dotnet build --configuration Release
       - name: Test

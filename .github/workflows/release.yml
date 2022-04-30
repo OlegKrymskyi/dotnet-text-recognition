@@ -22,15 +22,12 @@ jobs:
           dotnet-version: ${{ matrix.dotnet-version }}
       - name: Verify commit exists in origin/master
         run: git branch --remote --contains | Select-String 'origin/master'
-      - name: Echo git tags
-        run: echo ${GITHUB_REF/refs\/tags\//}
-      - name: Set version variable from tag
-        id: branch
-        run: echo ::set-output name=version::${GITHUB_REF/refs\/tags\//}
-      - name: Echo version variable
-        env:
-          VERSION: ${{ steps.branch.outputs.version }}
-        run: echo $env:VERSION
+      - name: get git tag
+        uses: olegtarasov/get-tag@v2.1
+        id: tagName
+        with:
+          tagRegex: "(.*)" # Optional. Returns specified group text as tag name. Full tag string is returned if regex is not defined.
+          tagRegexGroup: 1 # Optional. Default is 1.
       - name: Build
         run: dotnet build --configuration Release
       - name: Test
@@ -39,13 +36,11 @@ jobs:
         run: dotnet pack --configuration Release Ok.TextRecognition.Detection/Ok.TextRecognition.Detection.csproj
       - name: Publish detection package
         env:
-          VERSION: ${{ steps.branch.outputs.version }}
           NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY}}
-        run: dotnet nuget push Ok.TextRecognition.Detection/bin/Release/Ok.TextRecognition.Detection.$env:VERSION.nupkg --source https://api.nuget.org/v3/index.json --api-key $env:NUGET_AUTH_TOKEN
+        run: dotnet nuget push Ok.TextRecognition.Detection/bin/Release/Ok.TextRecognition.Detection.$env:GIT_TAG_NAME.nupkg --source https://api.nuget.org/v3/index.json --api-key $env:NUGET_AUTH_TOKEN
       - name: Create recognition package
         run: dotnet pack --configuration Release Ok.TextRecognition.Recognition/Ok.TextRecognition.Recognition.csproj
       - name: Publish recognition package
         env:
-          VERSION: ${{ steps.branch.outputs.version }}
           NUGET_AUTH_TOKEN: ${{secrets.NUGET_KEY}}
-        run: dotnet nuget push Ok.TextRecognition.Recognition/bin/Release/Ok.TextRecognition.Recognition.$env:VERSION.nupkg --source https://api.nuget.org/v3/index.json --api-key $env:NUGET_AUTH_TOKEN
+        run: dotnet nuget push Ok.TextRecognition.Recognition/bin/Release/Ok.TextRecognition.Recognition.$env:GIT_TAG_NAME.nupkg --source https://api.nuget.org/v3/index.json --api-key $env:NUGET_AUTH_TOKEN
