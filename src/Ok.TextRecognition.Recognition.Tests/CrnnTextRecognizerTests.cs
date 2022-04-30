@@ -17,6 +17,7 @@ namespace TextRecognition.Tests
         }
 
         [Theory]
+        [InlineData("assets/data/31.png", "31")]
         [InlineData("assets/data/batrider.png", "batrider")]
         [InlineData("assets/data/zero.png", "0")]
         [InlineData("assets/data/30.png", "30")]
