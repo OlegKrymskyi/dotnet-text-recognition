@@ -1,5 +1,6 @@
 using System;
 using System.Drawing;
+using System.IO;
 using Emgu.CV;
 using Emgu.CV.CvEnum;
 using FluentAssertions;
@@ -11,9 +12,12 @@ namespace Ok.TextRecognition.Recognition.Tests
     {
         private readonly CrnnTextRecognizer objectToTest;
 
+        private readonly ColorBoundaryFinder colorBoundaryFinder;
+
         public CrnnTextRecognizerTests()
         {
             this.objectToTest = new CrnnTextRecognizer();
+            this.colorBoundaryFinder = new ColorBoundaryFinder();
         }
 
         [Theory]
@@ -72,6 +76,53 @@ namespace Ok.TextRecognition.Recognition.Tests
 
             // Assert
             actual.Should().Be(expected);
+        }
+
+        [Theory]
+        [InlineData("assets/data/31.png", "31")]
+        public void Check_Text_Recognition_With_Finder(string fileName, string expected)
+        {
+            // Skip for linux env
+            if (!OperatingSystem.IsWindows())
+            {
+                return;
+            }
+
+            // Arrange
+            using var bitmap = (Bitmap)Bitmap.FromFile(fileName);
+            var rect = this.colorBoundaryFinder.FindBoundary(bitmap, 136, 255, 3);
+            
+            using var cuttedBitmap = new Bitmap((int)rect.Width, (int)rect.Height);
+            using (Graphics g = Graphics.FromImage(cuttedBitmap))
+            {
+                g.DrawImage(bitmap, new Rectangle(0, 0, (int)rect.Width, (int)rect.Height), new Rectangle((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height), GraphicsUnit.Pixel);
+            }
+
+            var box = new PointF[] { new PointF(0, cuttedBitmap.Height), new Point(0, 0), new PointF(cuttedBitmap.Width, 0), new PointF(cuttedBitmap.Width, cuttedBitmap.Height) };
+
+            // Act
+            var actual = this.objectToTest.Recognize(cuttedBitmap, box);
+
+            // Assert
+            actual.Should().Be(expected);
+#if DEBUG
+            
+            using (var maskedBitmap = new Bitmap(bitmap))
+            {
+                using (var g = Graphics.FromImage(maskedBitmap))
+                {
+                    g.DrawRectangle(new Pen(new SolidBrush(Color.Red)), new Rectangle((int)rect.X, (int)rect.Y, (int)rect.Width, (int)rect.Height));
+                }
+
+                var filenameMaskedImage = "assets/tmp/31_recognition_outset.png";
+                if (!Directory.Exists(Path.GetDirectoryName(filenameMaskedImage)))
+                {
+                    Directory.CreateDirectory(Path.GetDirectoryName(filenameMaskedImage));
+                }
+
+                maskedBitmap.Save(filenameMaskedImage);
+            }
+#endif
         }
     }
 }
