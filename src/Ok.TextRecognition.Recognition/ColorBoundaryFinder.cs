@@ -86,7 +86,10 @@ namespace Ok.TextRecognition.Recognition
                 {
                     var area = MaxAreaRectangle(contoursPoints[i].Select(p => new PointF(p.X, p.Y)).ToArray());
 
-                    rects.Add(area);
+                    if (area.Width > 1 && area.Height > 1)
+                    {
+                        rects.Add(area);
+                    }
                 }
             }
 

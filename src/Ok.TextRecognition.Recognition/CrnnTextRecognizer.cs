@@ -54,7 +54,12 @@ namespace Ok.TextRecognition.Recognition
         {
             using var grayScale = image.ToImage<Gray, byte>();
 
-            return Recognize(grayScale.Mat, box);
+            return Recognize(grayScale, box);
+        }
+
+        public string Recognize(Image<Gray, byte> image, PointF[] box)
+        {
+            return Recognize(image.Mat, box);
         }
 
         public string Recognize(Mat image, PointF[] box)
